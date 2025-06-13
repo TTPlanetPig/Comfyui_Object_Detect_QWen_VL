@@ -17,8 +17,10 @@ Runs a detection prompt on an input image using the loaded model. The node outpu
 The bounding boxes are converted to absolute pixel coordinates so they can be passed to SAM2 nodes.
 
 ### `BBoxesToSAM2`
-Wraps a list of bounding boxes into the batch format expected by
-[`ComfyUI-segment-anything-2`](https://github.com/kijai/ComfyUI-segment-anything-2).
+Wraps a list of bounding boxes into the `BBOXES` batch format expected by
+[`ComfyUI-segment-anything-2`](https://github.com/kijai/ComfyUI-segment-anything-2)
+and compatible nodes such as
+[`sam_2_ultra.py`](https://github.com/chflame163/ComfyUI_LayerStyle_Advance/blob/main/py/sam_2_ultra.py).
 
 ## Usage
 1. Place this repository inside your `ComfyUI/custom_nodes` directory.

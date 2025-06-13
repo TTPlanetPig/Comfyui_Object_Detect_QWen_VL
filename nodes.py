@@ -269,7 +269,7 @@ class BBoxesToSAM2:
     def INPUT_TYPES(cls):
         return {"required": {"bboxes": ("BBOX",)}}
 
-    RETURN_TYPES = ("BBOX",)
+    RETURN_TYPES = ("BBOXES",)
     RETURN_NAMES = ("sam2_bboxes",)
     FUNCTION = "convert"
     CATEGORY = "Qwen2.5-VL"

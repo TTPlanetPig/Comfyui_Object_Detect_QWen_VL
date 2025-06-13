@@ -262,12 +262,37 @@ class QwenVLDetection:
         return (output_text, boxes)
 
 
+class BBoxesToSAM2:
+    """Convert a list of bounding boxes to the format expected by SAM2 nodes."""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {"required": {"bboxes": ("BBOX",)}}
+
+    RETURN_TYPES = ("BBOX",)
+    RETURN_NAMES = ("sam2_bboxes",)
+    FUNCTION = "convert"
+    CATEGORY = "Qwen2.5-VL"
+
+    def convert(self, bboxes):
+        if not isinstance(bboxes, list):
+            raise ValueError("bboxes must be a list")
+
+        # If already batched, return as-is
+        if bboxes and isinstance(bboxes[0], (list, tuple)) and bboxes[0] and isinstance(bboxes[0][0], (list, tuple)):
+            return (bboxes,)
+
+        return ([bboxes],)
+
+
 NODE_CLASS_MAPPINGS = {
     "DownloadAndLoadQwenModel": DownloadAndLoadQwenModel,
     "QwenVLDetection": QwenVLDetection,
+    "BBoxesToSAM2": BBoxesToSAM2,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "DownloadAndLoadQwenModel": "Download and Load Qwen2.5-VL Model",
     "QwenVLDetection": "Qwen2.5-VL Object Detection",
+    "BBoxesToSAM2": "Prepare BBoxes for SAM2",
 }

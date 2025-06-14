@@ -43,7 +43,7 @@ def parse_boxes(
     input_w: int,
     input_h: int,
     score_threshold: float = 0.0,
-) -> List[List[int]]:
+) -> List[Dict[str, Any]]:
     text = parse_json(text)
     try:
         data = ast.literal_eval(text)
@@ -60,7 +60,7 @@ def parse_boxes(
                 data = []
         else:
             data = []
-    items: List[Tuple[float, List[int]]] = []
+    items: List[Dict[str, Any]] = []
     for item in data:
         box = item.get("bbox_2d") or item.get("bbox") or item
         score = float(item.get("score", 1.0))
@@ -74,9 +74,9 @@ def parse_boxes(
         if abs_y1 > abs_y2:
             abs_y1, abs_y2 = abs_y2, abs_y1
         if score >= score_threshold:
-            items.append((score, [abs_x1, abs_y1, abs_x2, abs_y2]))
-    items.sort(key=lambda x: x[0], reverse=True)
-    return [box for _score, box in items]
+            items.append({"score": score, "bbox": [abs_x1, abs_y1, abs_x2, abs_y2]})
+    items.sort(key=lambda x: x["score"], reverse=True)
+    return items
 
 
 @dataclass
@@ -240,10 +240,9 @@ class QwenVLDetection:
         output_text = processor.batch_decode(
             gen_ids, skip_special_tokens=True, clean_up_tokenization_spaces=True
         )[0]
-        output_text = f"score_threshold: {score_threshold}\n" + output_text
         input_h = inputs['image_grid_thw'][0][1] * 14
         input_w = inputs['image_grid_thw'][0][2] * 14
-        boxes = parse_boxes(
+        items = parse_boxes(
             output_text,
             image.width,
             image.height,
@@ -253,6 +252,7 @@ class QwenVLDetection:
         )
 
         selection = bbox_selection.strip().lower()
+        boxes = items
         if selection != "all" and selection:
             idxs = []
             for part in selection.replace(",", " ").split():
@@ -263,13 +263,16 @@ class QwenVLDetection:
             boxes = [boxes[i] for i in idxs if 0 <= i < len(boxes)]
 
         if merge_boxes and boxes:
-            x1 = min(b[0] for b in boxes)
-            y1 = min(b[1] for b in boxes)
-            x2 = max(b[2] for b in boxes)
-            y2 = max(b[3] for b in boxes)
-            boxes = [[x1, y1, x2, y2]]
+            x1 = min(b["bbox"][0] for b in boxes)
+            y1 = min(b["bbox"][1] for b in boxes)
+            x2 = max(b["bbox"][2] for b in boxes)
+            y2 = max(b["bbox"][3] for b in boxes)
+            score = max(b["score"] for b in boxes)
+            boxes = [{"bbox": [x1, y1, x2, y2], "score": score}]
 
-        return (output_text, boxes)
+        json_output = json.dumps(boxes, ensure_ascii=False)
+        bboxes_only = [b["bbox"] for b in boxes]
+        return (json_output, bboxes_only)
 
 
 class BBoxesToSAM2:

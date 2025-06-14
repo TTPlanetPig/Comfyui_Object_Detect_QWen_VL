@@ -13,9 +13,9 @@ Runs a detection prompt on an input image using the loaded model. The node outpu
 - `all` – return all boxes (default)
 - Comma-separated indices such as `0`, `1,2` or `0,2` – return only the selected boxes, sorted by detection confidence
 - `merge_boxes` – when enabled, merge the selected boxes into a single bounding box
-- `score_threshold` – drop boxes with a confidence score below this value (when the model provides scores)
+- `score_threshold` – drop boxes with a confidence score below this value (when the model provides scores). If no boxes meet the threshold the node returns an empty list.
 
-If the model output does not include a `score` field, each box is assumed to have confidence `1.0` so filtering does not remove them.
+If the model output does not include a `score` field, each box is assumed to have confidence `1.0`, so filtering does not remove them. The raw text returned by the detection node begins with the selected `score_threshold` value for reference.
 
 The bounding boxes are converted to absolute pixel coordinates so they can be passed to SAM2 nodes.
 
@@ -28,5 +28,5 @@ and compatible nodes such as
 ## Usage
 1. Place this repository inside your `ComfyUI/custom_nodes` directory.
 2. From the **Download and Load Qwen2.5-VL Model** node, select the model you want to use, choose the desired precision (INT4/INT8/BF16/FP16/FP32) and, if necessary, choose the device (such as `cuda:1`) where it should be loaded. The snapshot download will resume automatically if a previous attempt was interrupted.
-3. Connect the output model to **Qwen2.5-VL Object Detection**, provide an image and the object you want to locate (e.g. `cat`). Optionally set **score_threshold** to filter out low-confidence boxes, use **bbox_selection** to choose specific ones (e.g. `0,2`) and enable **merge_boxes** if you want them merged. The node will automatically build the detection prompt and return the selected boxes.
+3. Connect the output model to **Qwen2.5-VL Object Detection**, provide an image and the object you want to locate (e.g. `cat`). Optionally set **score_threshold** to filter out low-confidence boxes (the raw text output starts with this value), use **bbox_selection** to choose specific ones (e.g. `0,2`) and enable **merge_boxes** if you want them merged. The node will automatically build the detection prompt and return the selected boxes.
 4. Pass the bounding boxes through **Prepare BBoxes for SAM2** before feeding them into the SAM2 workflow.

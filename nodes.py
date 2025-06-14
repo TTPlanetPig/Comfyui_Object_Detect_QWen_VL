@@ -76,29 +76,6 @@ def parse_boxes(
         if score >= score_threshold:
             items.append((score, [abs_x1, abs_y1, abs_x2, abs_y2]))
     items.sort(key=lambda x: x[0], reverse=True)
-    if not items and data:
-        # If all boxes were filtered out but detections exist, keep the highest
-        # scoring box to avoid downstream errors.
-        best = max(
-            [
-                (
-                    float(it.get("score", 1.0)),
-                    it.get("bbox_2d") or it.get("bbox") or it,
-                )
-                for it in data
-            ],
-            key=lambda x: x[0],
-        )[1]
-        y1, x1, y2, x2 = best[1], best[0], best[3], best[2]
-        abs_y1 = int(y1 / input_h * img_height)
-        abs_x1 = int(x1 / input_w * img_width)
-        abs_y2 = int(y2 / input_h * img_height)
-        abs_x2 = int(x2 / input_w * img_width)
-        if abs_x1 > abs_x2:
-            abs_x1, abs_x2 = abs_x2, abs_x1
-        if abs_y1 > abs_y2:
-            abs_y1, abs_y2 = abs_y2, abs_y1
-        items.append((1.0, [abs_x1, abs_y1, abs_x2, abs_y2]))
     return [box for _score, box in items]
 
 
@@ -258,7 +235,10 @@ class QwenVLDetection:
         inputs = processor(text=[text], images=[image], return_tensors="pt", padding=True).to(device)
         output_ids = model.generate(**inputs, max_new_tokens=1024)
         gen_ids = [output_ids[len(inp):] for inp, output_ids in zip(inputs.input_ids, output_ids)]
-        output_text = processor.batch_decode(gen_ids, skip_special_tokens=True, clean_up_tokenization_spaces=True)[0]
+        output_text = processor.batch_decode(
+            gen_ids, skip_special_tokens=True, clean_up_tokenization_spaces=True
+        )[0]
+        output_text = f"score_threshold: {score_threshold}\n" + output_text
         input_h = inputs['image_grid_thw'][0][1] * 14
         input_w = inputs['image_grid_thw'][0][2] * 14
         boxes = parse_boxes(

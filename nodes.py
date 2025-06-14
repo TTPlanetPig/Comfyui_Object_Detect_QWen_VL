@@ -212,10 +212,12 @@ class QwenVLDetection:
     ):
         model = qwen_model.model
         processor = qwen_model.processor
-        device = next(model.parameters()).device
-        if qwen_model.device.startswith("cuda") and torch.cuda.is_available():
+        device = qwen_model.device
+        if device == "auto":
+            device = str(next(model.parameters()).device)
+        if device.startswith("cuda") and torch.cuda.is_available():
             try:
-                torch.cuda.set_device(int(qwen_model.device.split(":")[1]))
+                torch.cuda.set_device(int(device.split(":")[1]))
             except Exception:
                 pass
 

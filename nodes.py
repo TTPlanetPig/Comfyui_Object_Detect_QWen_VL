@@ -63,6 +63,7 @@ def parse_boxes(
     items: List[Dict[str, Any]] = []
     for item in data:
         box = item.get("bbox_2d") or item.get("bbox") or item
+        label = item.get("label", "")
         score = float(item.get("score", 1.0))
         y1, x1, y2, x2 = box[1], box[0], box[3], box[2]
         abs_y1 = int(y1 / input_h * img_height)
@@ -74,7 +75,7 @@ def parse_boxes(
         if abs_y1 > abs_y2:
             abs_y1, abs_y2 = abs_y2, abs_y1
         if score >= score_threshold:
-            items.append({"score": score, "bbox": [abs_x1, abs_y1, abs_x2, abs_y2]})
+            items.append({"score": score, "bbox": [abs_x1, abs_y1, abs_x2, abs_y2], "label": label})
     items.sort(key=lambda x: x["score"], reverse=True)
     return items
 
@@ -268,9 +269,13 @@ class QwenVLDetection:
             x2 = max(b["bbox"][2] for b in boxes)
             y2 = max(b["bbox"][3] for b in boxes)
             score = max(b["score"] for b in boxes)
-            boxes = [{"bbox": [x1, y1, x2, y2], "score": score}]
+            label = boxes[0].get("label", target)
+            boxes = [{"bbox": [x1, y1, x2, y2], "score": score, "label": label}]
 
-        json_output = json.dumps(boxes, ensure_ascii=False)
+        json_boxes = [
+            {"bbox_2d": b["bbox"], "label": b.get("label", target)} for b in boxes
+        ]
+        json_output = json.dumps(json_boxes, ensure_ascii=False)
         bboxes_only = [b["bbox"] for b in boxes]
         return (json_output, bboxes_only)
 

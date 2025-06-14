@@ -8,14 +8,13 @@ This repository provides a custom [ComfyUI](https://github.com/comfyanonymous/Co
 Downloads a chosen Qwen 2.5-VL model into `models/Qwen` and returns the loaded model and processor. You can choose which device to load the model onto (e.g. `cuda:1` if you have multiple GPUs) and the precision for the checkpoint (INT4, INT8, BF16, FP16 or FP32).  FlashAttention is used for FP16/BF16 but FP32 falls back to PyTorch SDPA since FlashAttention does not support it.
 
 ### `QwenVLDetection`
-Runs a detection prompt on an input image using the loaded model. The node outputs a JSON list of bounding boxes with their confidence scores and a separate list of coordinates. You can specify which boxes to return using the **bbox_selection** parameter:
+Runs a detection prompt on an input image using the loaded model. The node outputs a JSON list of bounding boxes of the form `{"bbox_2d": [x1, y1, x2, y2], "label": "object"}` and a separate list of coordinates. Boxes are sorted by confidence and you can specify which ones to return using the **bbox_selection** parameter:
 
 - `all` – return all boxes (default)
 - Comma-separated indices such as `0`, `1,2` or `0,2` – return only the selected boxes, sorted by detection confidence
 - `merge_boxes` – when enabled, merge the selected boxes into a single bounding box
-- `score_threshold` – drop boxes with a confidence score below this value (when the model provides scores). If no boxes meet the threshold the node returns an empty list.
+- `score_threshold` – drop boxes with a confidence score below this value when available
 
-If the model output does not include a `score` field, each box is assumed to have confidence `1.0`, so filtering does not remove them.
 
 The bounding boxes are converted to absolute pixel coordinates so they can be passed to SAM2 nodes.
 
@@ -28,5 +27,5 @@ and compatible nodes such as
 ## Usage
 1. Place this repository inside your `ComfyUI/custom_nodes` directory.
 2. From the **Download and Load Qwen2.5-VL Model** node, select the model you want to use, choose the desired precision (INT4/INT8/BF16/FP16/FP32) and, if necessary, choose the device (such as `cuda:1`) where it should be loaded. The snapshot download will resume automatically if a previous attempt was interrupted.
-3. Connect the output model to **Qwen2.5-VL Object Detection**, provide an image and the object you want to locate (e.g. `cat`). Optionally set **score_threshold** to filter out low-confidence boxes, use **bbox_selection** to choose specific ones (e.g. `0,2`) and enable **merge_boxes** if you want them merged. The node will automatically build the detection prompt and return the selected boxes with scores in JSON.
+3. Connect the output model to **Qwen2.5-VL Object Detection**, provide an image and the object you want to locate (e.g. `cat`). Optionally set **score_threshold** to filter out low-confidence boxes, use **bbox_selection** to choose specific ones (e.g. `0,2`) and enable **merge_boxes** if you want them merged. The node will automatically build the detection prompt and return the selected boxes in JSON.
 4. Pass the bounding boxes through **Prepare BBoxes for SAM2** before feeding them into the SAM2 workflow.

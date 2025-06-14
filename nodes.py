@@ -42,6 +42,7 @@ def parse_boxes(
     img_height: int,
     input_w: int,
     input_h: int,
+    score_threshold: float = 0.0,
 ) -> List[List[int]]:
     text = parse_json(text)
     try:
@@ -62,7 +63,7 @@ def parse_boxes(
     items: List[Tuple[float, List[int]]] = []
     for item in data:
         box = item.get("bbox_2d") or item.get("bbox") or item
-        score = float(item.get("score", 0))
+        score = float(item.get("score", 1.0))
         y1, x1, y2, x2 = box[1], box[0], box[3], box[2]
         abs_y1 = int(y1 / input_h * img_height)
         abs_x1 = int(x1 / input_w * img_width)
@@ -72,8 +73,32 @@ def parse_boxes(
             abs_x1, abs_x2 = abs_x2, abs_x1
         if abs_y1 > abs_y2:
             abs_y1, abs_y2 = abs_y2, abs_y1
-        items.append((score, [abs_x1, abs_y1, abs_x2, abs_y2]))
+        if score >= score_threshold:
+            items.append((score, [abs_x1, abs_y1, abs_x2, abs_y2]))
     items.sort(key=lambda x: x[0], reverse=True)
+    if not items and data:
+        # If all boxes were filtered out but detections exist, keep the highest
+        # scoring box to avoid downstream errors.
+        best = max(
+            [
+                (
+                    float(it.get("score", 1.0)),
+                    it.get("bbox_2d") or it.get("bbox") or it,
+                )
+                for it in data
+            ],
+            key=lambda x: x[0],
+        )[1]
+        y1, x1, y2, x2 = best[1], best[0], best[3], best[2]
+        abs_y1 = int(y1 / input_h * img_height)
+        abs_x1 = int(x1 / input_w * img_width)
+        abs_y2 = int(y2 / input_h * img_height)
+        abs_x2 = int(x2 / input_w * img_width)
+        if abs_x1 > abs_x2:
+            abs_x1, abs_x2 = abs_x2, abs_x1
+        if abs_y1 > abs_y2:
+            abs_y1, abs_y2 = abs_y2, abs_y1
+        items.append((1.0, [abs_x1, abs_y1, abs_x2, abs_y2]))
     return [box for _score, box in items]
 
 
@@ -189,6 +214,7 @@ class QwenVLDetection:
                 "image": ("IMAGE",),
                 "target": ("STRING", {"default": "object"}),
                 "bbox_selection": ("STRING", {"default": "all"}),
+                "score_threshold": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "merge_boxes": ("BOOLEAN", {"default": False}),
             },
         }
@@ -204,6 +230,7 @@ class QwenVLDetection:
         image,
         target: str,
         bbox_selection: str = "all",
+        score_threshold: float = 0.0,
         merge_boxes: bool = False,
     ):
         model = qwen_model.model
@@ -240,6 +267,7 @@ class QwenVLDetection:
             image.height,
             input_w,
             input_h,
+            score_threshold,
         )
 
         selection = bbox_selection.strip().lower()

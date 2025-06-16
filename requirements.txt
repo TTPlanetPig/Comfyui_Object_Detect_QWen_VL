@@ -1,4 +1,4 @@
-transformers==4.41.2
-huggingface_hub==0.23.1
+transformers>=4.41.2
+huggingface_hub>=0.23.1
 pillow
 bitsandbytes

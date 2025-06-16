@@ -7,6 +7,7 @@ This repository provides a custom [ComfyUI](https://github.com/comfyanonymous/Co
 ### `DownloadAndLoadQwenModel`
 Downloads a chosen Qwen 2.5-VL model into `models/Qwen` and returns the loaded model and processor. You can choose which device to load the model onto (e.g. `cuda:1` if you have multiple GPUs), the precision for the checkpoint (INT4, INT8, BF16, FP16 or FP32) and whether to use FlashAttention or SDPA. FlashAttention is automatically replaced with SDPA when FP32 precision is selected because FlashAttention does not support it.
 
+
 ### `QwenVLDetection`
 Runs a detection prompt on an input image using the loaded model. The node outputs a JSON list of bounding boxes of the form `{"bbox_2d": [x1, y1, x2, y2], "label": "object"}` and a separate list of coordinates. Boxes are sorted by confidence and you can specify which ones to return using the **bbox_selection** parameter:
 

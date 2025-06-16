@@ -1,0 +1,729 @@
+{
+  "id": "460e0e84-1637-4766-b255-f2054c096b6d",
+  "revision": 0,
+  "last_node_id": 48,
+  "last_link_id": 58,
+  "nodes": [
+    {
+      "id": 27,
+      "type": "LayerMask: SAM2UltraV2",
+      "pos": [
+        -1002.9354248046875,
+        641.9041137695312
+      ],
+      "size": [
+        332.5406188964844,
+        290
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "sam2_model",
+          "type": "LS_SAM2_MODEL",
+          "link": 37
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 38
+        },
+        {
+          "name": "bboxes",
+          "type": "BBOXES",
+          "link": 36
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            39
+          ]
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            40
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui_layerstyle_advance",
+        "ver": "0f9184100e626e3202568a7cf890b3b92685a168",
+        "Node name for S&R": "LayerMask: SAM2UltraV2",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "all",
+        "0,",
+        "VITMatte",
+        6,
+        4,
+        0.15,
+        0.99,
+        true,
+        2
+      ],
+      "color": "rgba(27, 80, 119, 0.7)"
+    },
+    {
+      "id": 30,
+      "type": "MaskToImage",
+      "pos": [
+        -631.9689331054688,
+        908.1533203125
+      ],
+      "size": [
+        184.62362670898438,
+        26
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 40
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            41
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.35",
+        "Node name for S&R": "MaskToImage",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 7,
+      "type": "Sam2Segmentation",
+      "pos": [
+        -930.3997802734375,
+        140.27528381347656
+      ],
+      "size": [
+        272.087890625,
+        182
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "sam2_model",
+          "type": "SAM2MODEL",
+          "link": 6
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 55
+        },
+        {
+          "name": "coordinates_positive",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "coordinates_negative",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "bboxes",
+          "shape": 7,
+          "type": "BBOX",
+          "link": 34
+        },
+        {
+          "name": "mask",
+          "shape": 7,
+          "type": "MASK",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            8
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "segment-anything-2",
+        "ver": "c59676b008a76237002926f684d0ca3a9b29ac54",
+        "Node name for S&R": "Sam2Segmentation",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        true,
+        true
+      ]
+    },
+    {
+      "id": 9,
+      "type": "MaskToImage",
+      "pos": [
+        -501.202392578125,
+        293.0865478515625
+      ],
+      "size": [
+        184.62362670898438,
+        26
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            9
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.35",
+        "Node name for S&R": "MaskToImage",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 10,
+      "type": "PreviewImage",
+      "pos": [
+        -555.7324829101562,
+        -57.00675964355469
+      ],
+      "size": [
+        292.0467529296875,
+        285.2787780761719
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 9
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.35",
+        "Node name for S&R": "PreviewImage",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 31,
+      "type": "PreviewImage",
+      "pos": [
+        -200.33412170410156,
+        508.58343505859375
+      ],
+      "size": [
+        349.6924133300781,
+        366.1221618652344
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 41
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.35",
+        "Node name for S&R": "PreviewImage",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 4,
+      "type": "DownloadAndLoadQwenModel",
+      "pos": [
+        -1430.74560546875,
+        -106.7825927734375
+      ],
+      "size": [
+        348.1744079589844,
+        106
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "qwen_model",
+          "type": "QWEN_MODEL",
+          "links": [
+            2
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "TTPlanetPig/Comfyui_Object_Detect_QWen_VL",
+        "ver": "873537dc731da164f7c34cf555109d034c1483a1",
+        "Node name for S&R": "DownloadAndLoadQwenModel",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "Qwen/Qwen2.5-VL-7B-Instruct",
+        "cuda:0",
+        "BF16"
+      ]
+    },
+    {
+      "id": 5,
+      "type": "LoadImage",
+      "pos": [
+        -2211.11083984375,
+        160.8384552001953
+      ],
+      "size": [
+        513.1315307617188,
+        593.5972290039062
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            38,
+            54,
+            55
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.35",
+        "Node name for S&R": "LoadImage",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "image (6).webp",
+        "image"
+      ]
+    },
+    {
+      "id": 26,
+      "type": "BBoxesToSAM2",
+      "pos": [
+        -1358.8602294921875,
+        744.7200317382812
+      ],
+      "size": [
+        204.08554077148438,
+        26
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "bboxes",
+          "type": "BBOX",
+          "link": 35
+        }
+      ],
+      "outputs": [
+        {
+          "name": "sam2_bboxes",
+          "type": "BBOXES",
+          "links": [
+            36
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "TTPlanetPig/Comfyui_Object_Detect_QWen_VL",
+        "ver": "6df7ba0bb7343fc949725e20346991fc5bc717cb",
+        "Node name for S&R": "BBoxesToSAM2",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 28,
+      "type": "LayerMask: LoadSAM2Model",
+      "pos": [
+        -1008.9616088867188,
+        483.0679016113281
+      ],
+      "size": [
+        355.1333923339844,
+        106
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "sam2_model",
+          "type": "LS_SAM2_MODEL",
+          "links": [
+            37
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui_layerstyle_advance",
+        "ver": "0f9184100e626e3202568a7cf890b3b92685a168",
+        "Node name for S&R": "LayerMask: LoadSAM2Model",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "sam2_hiera_base_plus.safetensors",
+        "fp16",
+        "cuda"
+      ],
+      "color": "rgba(27, 80, 119, 0.7)"
+    },
+    {
+      "id": 3,
+      "type": "QwenVLDetection",
+      "pos": [
+        -1445.084716796875,
+        68.97034454345703
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "qwen_model",
+          "type": "QWEN_MODEL",
+          "link": 2
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 54
+        }
+      ],
+      "outputs": [
+        {
+          "name": "text",
+          "type": "JSON",
+          "links": [
+            43
+          ]
+        },
+        {
+          "name": "bboxes",
+          "type": "BBOX",
+          "links": [
+            34,
+            35
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "TTPlanetPig/Comfyui_Object_Detect_QWen_VL",
+        "ver": "873537dc731da164f7c34cf555109d034c1483a1",
+        "Node name for S&R": "QwenVLDetection",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "face",
+        "all",
+        0,
+        false
+      ]
+    },
+    {
+      "id": 29,
+      "type": "PreviewImage",
+      "pos": [
+        -580.5819091796875,
+        508.97003173828125
+      ],
+      "size": [
+        337.5673522949219,
+        366.2738342285156
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 39
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.35",
+        "Node name for S&R": "PreviewImage",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 35,
+      "type": "easy showAnything",
+      "pos": [
+        -1440.5634765625,
+        372.2619323730469
+      ],
+      "size": [
+        311.5696105957031,
+        171.73924255371094
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 43
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "e4ac947d9612ef5d12fb055c0b51b9de8b981deb",
+        "Node name for S&R": "easy showAnything",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "[{\"bbox_2d\": [526, 264, 782, 809], \"label\": \"face\"}, {\"bbox_2d\": [19, 495, 557, 1243], \"label\": \"face\"}, {\"bbox_2d\": [347, 719, 782, 1279], \"label\": \"face\"}, {\"bbox_2d\": [729, 500, 1201, 1228], \"label\": \"face\"}]"
+      ]
+    },
+    {
+      "id": 8,
+      "type": "DownloadAndLoadSAM2Model",
+      "pos": [
+        -920.916748046875,
+        -48.17786407470703
+      ],
+      "size": [
+        270,
+        130
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "sam2_model",
+          "type": "SAM2MODEL",
+          "links": [
+            6
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "segment-anything-2",
+        "ver": "c59676b008a76237002926f684d0ca3a9b29ac54",
+        "Node name for S&R": "DownloadAndLoadSAM2Model",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "sam2_hiera_base_plus.safetensors",
+        "single_image",
+        "cuda",
+        "fp16"
+      ]
+    }
+  ],
+  "links": [
+    [
+      2,
+      4,
+      0,
+      3,
+      0,
+      "QWEN_MODEL"
+    ],
+    [
+      6,
+      8,
+      0,
+      7,
+      0,
+      "SAM2MODEL"
+    ],
+    [
+      8,
+      7,
+      0,
+      9,
+      0,
+      "MASK"
+    ],
+    [
+      9,
+      9,
+      0,
+      10,
+      0,
+      "IMAGE"
+    ],
+    [
+      34,
+      3,
+      1,
+      7,
+      4,
+      "BBOX"
+    ],
+    [
+      35,
+      3,
+      1,
+      26,
+      0,
+      "BBOX"
+    ],
+    [
+      36,
+      26,
+      0,
+      27,
+      2,
+      "BBOXES"
+    ],
+    [
+      37,
+      28,
+      0,
+      27,
+      0,
+      "LS_SAM2_MODEL"
+    ],
+    [
+      38,
+      5,
+      0,
+      27,
+      1,
+      "IMAGE"
+    ],
+    [
+      39,
+      27,
+      0,
+      29,
+      0,
+      "IMAGE"
+    ],
+    [
+      40,
+      27,
+      1,
+      30,
+      0,
+      "MASK"
+    ],
+    [
+      41,
+      30,
+      0,
+      31,
+      0,
+      "IMAGE"
+    ],
+    [
+      43,
+      3,
+      0,
+      35,
+      0,
+      "*"
+    ],
+    [
+      54,
+      5,
+      0,
+      3,
+      1,
+      "IMAGE"
+    ],
+    [
+      55,
+      5,
+      0,
+      7,
+      1,
+      "IMAGE"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ue_links": [],
+    "links_added_by_ue": [],
+    "frontendVersion": "1.18.9",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}

@@ -180,8 +180,8 @@ class DownloadAndLoadQwenModel:
                 device_map=device_map,
                 attn_implementation=attn_impl,
             )
-        except Exception:
-            # If loading fails (likely due to an incomplete download), force a
+        except OSError:
+            # If loading fails due to missing or corrupt files, force a
             # re-download and try again.
             snapshot_download(
                 repo_id=model_name,
@@ -197,6 +197,9 @@ class DownloadAndLoadQwenModel:
                 device_map=device_map,
                 attn_implementation=attn_impl,
             )
+        except Exception:
+            # Surface any other errors (e.g. missing flash_attn)
+            raise
         processor = AutoProcessor.from_pretrained(model_dir)
         return (QwenModel(model=model, processor=processor, device=device),)
 

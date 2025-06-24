@@ -129,6 +129,7 @@ class DownloadAndLoadQwenModel:
                     "flash_attention_2",
                     "sdpa",
                 ], ),
+                "auto_download": ("BOOLEAN", {"default": True}),
             }
         }
 
@@ -137,16 +138,24 @@ class DownloadAndLoadQwenModel:
     FUNCTION = "load"
     CATEGORY = "Qwen2.5-VL"
 
-    def load(self, model_name: str, device: str, precision: str, attention: str):
+    def load(
+        self,
+        model_name: str,
+        device: str,
+        precision: str,
+        attention: str,
+        auto_download: bool = True,
+    ):
         model_dir = os.path.join(folder_paths.models_dir, "Qwen", model_name.replace("/", "_"))
         # Always attempt download with resume enabled so an interrupted download
         # can be continued when the node is executed again.
-        snapshot_download(
-            repo_id=model_name,
-            local_dir=model_dir,
-            local_dir_use_symlinks=False,
-            resume_download=True,
-        )
+        if auto_download:
+            snapshot_download(
+                repo_id=model_name,
+                local_dir=model_dir,
+                local_dir_use_symlinks=False,
+                resume_download=True,
+            )
         if device == "auto":
             device_map = "auto"
         elif device == "cpu":
@@ -180,23 +189,26 @@ class DownloadAndLoadQwenModel:
                 device_map=device_map,
                 attn_implementation=attn_impl,
             )
-        except OSError:
-            # If loading fails due to missing or corrupt files, force a
-            # re-download and try again.
-            snapshot_download(
-                repo_id=model_name,
-                local_dir=model_dir,
-                local_dir_use_symlinks=False,
-                resume_download=True,
-                force_download=True,
-            )
-            model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
-                model_dir,
-                torch_dtype=torch_dtype,
-                quantization_config=quant_config,
-                device_map=device_map,
-                attn_implementation=attn_impl,
-            )
+        except OSError as e:
+            # If loading fails due to missing or corrupt files, retry the download
+            # when auto_download is enabled. Otherwise re-raise the original error.
+            if auto_download:
+                snapshot_download(
+                    repo_id=model_name,
+                    local_dir=model_dir,
+                    local_dir_use_symlinks=False,
+                    resume_download=True,
+                    force_download=True,
+                )
+                model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+                    model_dir,
+                    torch_dtype=torch_dtype,
+                    quantization_config=quant_config,
+                    device_map=device_map,
+                    attn_implementation=attn_impl,
+                )
+            else:
+                raise e
         except Exception:
             # Surface any other errors (e.g. missing flash_attn)
             raise

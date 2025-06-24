@@ -5,7 +5,7 @@ This repository provides a custom [ComfyUI](https://github.com/comfyanonymous/Co
 ## Nodes
 
 ### `DownloadAndLoadQwenModel`
-Downloads a chosen Qwen 2.5-VL model into `models/Qwen` and returns the loaded model and processor. You can choose which device to load the model onto (e.g. `cuda:1` if you have multiple GPUs), the precision for the checkpoint (INT4, INT8, BF16, FP16 or FP32) and whether to use FlashAttention or SDPA. FlashAttention is automatically replaced with SDPA when FP32 precision is selected because FlashAttention does not support it.
+Downloads a chosen Qwen 2.5-VL model into `models/Qwen` and returns the loaded model and processor. You can choose which device to load the model onto (e.g. `cuda:1` if you have multiple GPUs), the precision for the checkpoint (INT4, INT8, BF16, FP16 or FP32) and whether to use FlashAttention or SDPA. FlashAttention is automatically replaced with SDPA when FP32 precision is selected because FlashAttention does not support it. Set **auto_download** to `false` if you prefer to load a previously downloaded model without attempting to download it again.
 
 
 ### `QwenVLDetection`

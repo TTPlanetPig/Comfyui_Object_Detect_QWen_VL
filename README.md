@@ -15,6 +15,7 @@ Runs a detection prompt on an input image using the loaded model. The node outpu
 - Comma-separated indices such as `0`, `1,2` or `0,2` – return only the selected boxes, sorted by detection confidence
 - `merge_boxes` – when enabled, merge the selected boxes into a single bounding box
 - `score_threshold` – drop boxes with a confidence score below this value when available
+- `unload_model` – when enabled, automatically unload the model from GPU memory after detection to free up VRAM for subsequent nodes
 
 
 The bounding boxes are converted to absolute pixel coordinates so they can be passed to SAM2 nodes.
@@ -28,5 +29,5 @@ and compatible nodes such as
 ## Usage
 1. Place this repository inside your `ComfyUI/custom_nodes` directory.
 2. From the **Download and Load Qwen2.5-VL Model** node, select the model you want to use, choose the desired precision (INT4/INT8/BF16/FP16/FP32), the attention implementation (FlashAttention or SDPA) and, if necessary, choose the device (such as `cuda:1`) where it should be loaded. The snapshot download will resume automatically if a previous attempt was interrupted. FlashAttention is replaced with SDPA automatically when used with FP32 precision.
-3. Connect the output model to **Qwen2.5-VL Object Detection**, provide an image and the object you want to locate (e.g. `cat`). Optionally set **score_threshold** to filter out low-confidence boxes, use **bbox_selection** to choose specific ones (e.g. `0,2`) and enable **merge_boxes** if you want them merged. The node will automatically build the detection prompt and return the selected boxes in JSON.
+3. Connect the output model to **Qwen2.5-VL Object Detection**, provide an image and the object you want to locate (e.g. `cat`). Optionally set **score_threshold** to filter out low-confidence boxes, use **bbox_selection** to choose specific ones (e.g. `0,2`), enable **merge_boxes** if you want them merged, and enable **unload_model** to automatically free up GPU memory after detection. The node will automatically build the detection prompt and return the selected boxes in JSON.
 4. Pass the bounding boxes through **Prepare BBoxes for SAM2** before feeding them into the SAM2 workflow.

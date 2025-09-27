@@ -215,6 +215,7 @@ class QwenVLDetection:
                 "bbox_selection": ("STRING", {"default": "all"}),
                 "score_threshold": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "merge_boxes": ("BOOLEAN", {"default": False}),
+                "unload_model": ("BOOLEAN", {"default": False}),
             },
         }
 
@@ -231,16 +232,53 @@ class QwenVLDetection:
         bbox_selection: str = "all",
         score_threshold: float = 0.0,
         merge_boxes: bool = False,
+        unload_model: bool = False,
     ):
         """Generate bounding boxes for ``target`` within ``image``."""
         model = qwen_model.model
         processor = qwen_model.processor
         device = qwen_model.device
+        
+        # 检查模型当前设备状态
+        current_device = str(next(model.parameters()).device)
+        expected_device = device
+        
         if device == "auto":
-            device = str(next(model.parameters()).device)
-        if device.startswith("cuda") and torch.cuda.is_available():
+            # 自动选择设备：如果CUDA可用则使用CUDA，否则使用CPU
+            if torch.cuda.is_available():
+                expected_device = "cuda:0"
+            else:
+                expected_device = "cpu"
+        elif device.startswith("cuda") and not torch.cuda.is_available():
+            # 如果指定了CUDA但CUDA不可用，回退到CPU
+            expected_device = "cpu"
+        
+        # 如果模型不在预期设备上，将其移动到正确设备
+        if not current_device.startswith(expected_device):
+            if expected_device.startswith("cuda"):
+                # 确保CUDA设备可用
+                device_index = 0
+                if ":" in expected_device:
+                    device_index = int(expected_device.split(":")[1])
+                if device_index < torch.cuda.device_count():
+                    model.to(expected_device)
+                    if torch.cuda.is_available():
+                        torch.cuda.set_device(device_index)
+                else:
+                    # 如果指定的CUDA设备不存在，使用第一个可用的CUDA设备
+                    model.to("cuda:0")
+                    if torch.cuda.is_available():
+                        torch.cuda.set_device(0)
+            else:
+                # 移动到CPU
+                model.to("cpu")
+        
+        # 更新当前设备状态
+        current_device = str(next(model.parameters()).device)
+        if current_device.startswith("cuda") and torch.cuda.is_available():
             try:
-                torch.cuda.set_device(int(device.split(":")[1]))
+                device_index = int(current_device.split(":")[1])
+                torch.cuda.set_device(device_index)
             except Exception:
                 pass
 
@@ -257,7 +295,9 @@ class QwenVLDetection:
             {"role": "user", "content": [{"type": "text", "text": prompt}, {"image": image}]},
         ]
         text = processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        inputs = processor(text=[text], images=[image], return_tensors="pt", padding=True).to(device)
+        # 获取模型当前所在的设备
+        model_device = next(model.parameters()).device
+        inputs = processor(text=[text], images=[image], return_tensors="pt", padding=True).to(model_device)
         with torch.no_grad():
             output_ids = model.generate(**inputs, max_new_tokens=1024)
         gen_ids = [output_ids[len(inp):] for inp, output_ids in zip(inputs.input_ids, output_ids)]
@@ -300,6 +340,15 @@ class QwenVLDetection:
         ]
         json_output = json.dumps(json_boxes, ensure_ascii=False)
         bboxes_only = [b["bbox"] for b in boxes]
+
+        # 模型卸载逻辑
+        if unload_model:
+            # 将模型移动到CPU
+            model.to('cpu')
+            # 释放显存缓存
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+
         return (json_output, bboxes_only)
 
 

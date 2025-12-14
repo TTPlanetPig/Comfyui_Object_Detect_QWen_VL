@@ -257,15 +257,40 @@ class QwenVLDetection:
             {"role": "user", "content": [{"type": "text", "text": prompt}, {"image": image}]},
         ]
         text = processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        inputs = processor(text=[text], images=[image], return_tensors="pt", padding=True).to(device)
+        inputs = processor(text=[text], images=[image], return_tensors="pt", padding=True)
+        # Avoid keeping metadata tensors such as ``image_grid_thw`` on the GPU to
+        # prevent CUDA assertion failures on newer PyTorch builds when converting
+        # them to Python scalars for box rescaling. Fall back to pixel values or
+        # raw image dimensions if the grid is missing or produces invalid sizes.
+        input_h = None
+        input_w = None
+        image_grid = inputs.get("image_grid_thw")
+        if image_grid is not None:
+            image_grid = image_grid.detach().cpu()
+            if image_grid.numel() >= 3:
+                h_val = int(image_grid[0][1].item() * 14)
+                w_val = int(image_grid[0][2].item() * 14)
+                if h_val > 0 and w_val > 0:
+                    input_h, input_w = h_val, w_val
+
+        if input_h is None or input_w is None:
+            pixel_values = inputs.get("pixel_values")
+            if pixel_values is not None:
+                input_h = int(pixel_values.shape[-2])
+                input_w = int(pixel_values.shape[-1])
+            else:
+                input_w, input_h = image.size
+
+        input_h = max(1, input_h)
+        input_w = max(1, input_w)
+
+        inputs = inputs.to(device)
         with torch.no_grad():
             output_ids = model.generate(**inputs, max_new_tokens=1024)
         gen_ids = [output_ids[len(inp):] for inp, output_ids in zip(inputs.input_ids, output_ids)]
         output_text = processor.batch_decode(
             gen_ids, skip_special_tokens=True, clean_up_tokenization_spaces=True
         )[0]
-        input_h = inputs['image_grid_thw'][0][1] * 14
-        input_w = inputs['image_grid_thw'][0][2] * 14
         items = parse_boxes(
             output_text,
             image.width,

@@ -264,17 +264,21 @@ class QwenVLDetection:
         # raw image dimensions if the grid is missing or produces invalid sizes.
         input_h = None
         input_w = None
+        sanitized_grid = None
         image_grid = inputs.get("image_grid_thw")
         if image_grid is not None:
             image_grid_cpu = image_grid.detach().cpu()
             if image_grid_cpu.numel() >= 3:
-                h_val = int(image_grid_cpu[0][1].item() * 14)
-                w_val = int(image_grid_cpu[0][2].item() * 14)
+                t_val = int(image_grid_cpu[0][0].item())
+                h_tokens = max(1, int(image_grid_cpu[0][1].item()))
+                w_tokens = max(1, int(image_grid_cpu[0][2].item()))
+                sanitized_grid = torch.tensor([[t_val, h_tokens, w_tokens]], dtype=image_grid_cpu.dtype)
+                h_val = h_tokens * 14
+                w_val = w_tokens * 14
                 if h_val > 0 and w_val > 0:
                     input_h, input_w = h_val, w_val
-            # ``image_grid_thw`` is metadata only; drop it before moving inputs to
-            # the target device to avoid CUDA assertions on some PyTorch builds.
-            inputs.pop("image_grid_thw", None)
+            else:
+                inputs.pop("image_grid_thw", None)
 
         if input_h is None or input_w is None:
             pixel_values = inputs.get("pixel_values")
@@ -286,6 +290,13 @@ class QwenVLDetection:
 
         input_h = max(1, input_h)
         input_w = max(1, input_w)
+        if sanitized_grid is not None:
+            inputs["image_grid_thw"] = sanitized_grid
+        elif inputs.get("image_grid_thw") is None:
+            # Synthesize a minimal grid so the model receives non-empty metadata.
+            h_tokens = max(1, int(round(input_h / 14)))
+            w_tokens = max(1, int(round(input_w / 14)))
+            inputs["image_grid_thw"] = torch.tensor([[1, h_tokens, w_tokens]], dtype=torch.int64)
 
         inputs = inputs.to(device)
         with torch.no_grad():

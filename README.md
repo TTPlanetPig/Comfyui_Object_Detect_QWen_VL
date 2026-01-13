@@ -25,6 +25,11 @@ Wraps a list of bounding boxes into the `BBOXES` batch format expected by
 and compatible nodes such as
 [`sam_2_ultra.py`](https://github.com/chflame163/ComfyUI_LayerStyle_Advance/blob/main/py/sam_2_ultra.py).
 
+### `BBoxesStringToSAM2`
+Convert bounding boxes strings to SAM2 format,this node allows you to use external LLM API (e.g.[`comfyui_LLM_party`](https://github.com/heshengtao/comfyui_LLM_party)) to detect the object.
+
+**The external LLM should have the ability to detect objects and return bounding boxes as required,for the response format and prompt,please reference `External_LLM_example.json`**
+
 ## Usage
 1. Place this repository inside your `ComfyUI/custom_nodes` directory.
 2. From the **Download and Load Qwen2.5-VL Model** node, select the model you want to use, choose the desired precision (INT4/INT8/BF16/FP16/FP32), the attention implementation (FlashAttention or SDPA) and, if necessary, choose the device (such as `cuda:1`) where it should be loaded. The snapshot download will resume automatically if a previous attempt was interrupted. FlashAttention is replaced with SDPA automatically when used with FP32 precision.

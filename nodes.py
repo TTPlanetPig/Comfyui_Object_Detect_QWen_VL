@@ -1,6 +1,7 @@
 import os
 import ast
 import json
+import re
 from dataclasses import dataclass
 from typing import List, Dict, Any, Tuple
 
@@ -350,15 +351,68 @@ class BBoxesToSAM2:
 
         return ([bboxes],)
 
+class BBoxesStringToSAM2:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "bboxes_strings": ("text",),
+            },
+        }
+
+    RETURN_TYPES = ("BBOXES",)
+    RETURN_NAMES = ("sam2_bboxes",)
+    FUNCTION = "convert_bbox_from_string"
+    CATEGORY = "Qwen2.5-VL"
+
+    def convert_bbox_from_string(
+            self,
+            bboxes_strings):
+        # Remove the ```json and ``` if they exist
+        bboxes_strings = re.sub(r'```(?:json)?\n?|```', '', bboxes_strings).strip()
+        bboxes_coords = []
+
+        try:
+            data = json.loads(bboxes_strings)
+        except json.JSONDecodeError:
+            raise TypeError("Invalid JSON format")
+            return None
+        
+        
+        for item in data:
+            if "bbox_2d" in item:
+                bboxes_coords.extend(item["bbox_2d"])
+        # Conversion to SAM2 format
+
+
+        print(f"{bboxes_coords}")
+        try:
+            bboxes_coords = list(bboxes_coords)
+        except:
+            pass
+    
+        if not isinstance(bboxes_coords, list):
+            raise ValueError("bboxes must be a list")
+
+        # If already batched, return as-is
+        if bboxes_coords and isinstance(bboxes_coords[0], (list, tuple)) and bboxes_coords[0] and isinstance(bboxes_coords[0][0], (list, tuple)):
+            return (bboxes_coords,)
+
+        return ([[bboxes_coords]],)
+
+
 
 NODE_CLASS_MAPPINGS = {
     "DownloadAndLoadQwenModel": DownloadAndLoadQwenModel,
     "QwenVLDetection": QwenVLDetection,
     "BBoxesToSAM2": BBoxesToSAM2,
+    "BBoxesStringToSAM2":BBoxesStringToSAM2
+
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "DownloadAndLoadQwenModel": "Download and Load Qwen2.5-VL Model",
     "QwenVLDetection": "Qwen2.5-VL Object Detection",
     "BBoxesToSAM2": "Prepare BBoxes for SAM2",
+    "BBoxesStringToSAM2": "Covert Qwen2.5-VL BBox Strings to SAM2 format",
 }

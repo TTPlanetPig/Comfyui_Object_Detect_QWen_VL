@@ -1,0 +1,789 @@
+{
+  "id": "460e0e84-1637-4766-b255-f2054c096b6d",
+  "revision": 0,
+  "last_node_id": 89,
+  "last_link_id": 117,
+  "nodes": [
+    {
+      "id": 28,
+      "type": "LayerMask: LoadSAM2Model",
+      "pos": [
+        -1224.4005126953125,
+        23.814104080200195
+      ],
+      "size": [
+        355.1333923339844,
+        106
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "sam2_model",
+          "type": "LS_SAM2_MODEL",
+          "links": [
+            37
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui_layerstyle_advance",
+        "ver": "0f9184100e626e3202568a7cf890b3b92685a168",
+        "Node name for S&R": "LayerMask: LoadSAM2Model",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "sam2_hiera_base_plus.safetensors",
+        "fp16",
+        "cuda"
+      ],
+      "color": "rgba(27, 80, 119, 0.7)"
+    },
+    {
+      "id": 29,
+      "type": "PreviewImage",
+      "pos": [
+        -830.7015991210938,
+        28.697757720947266
+      ],
+      "size": [
+        337.5673522949219,
+        366.2738342285156
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 39
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.35",
+        "Node name for S&R": "PreviewImage",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 30,
+      "type": "MaskToImage",
+      "pos": [
+        -815.8803100585938,
+        465.7143249511719
+      ],
+      "size": [
+        184.62362670898438,
+        26
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 40
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            41
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.35",
+        "Node name for S&R": "MaskToImage",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 31,
+      "type": "PreviewImage",
+      "pos": [
+        -436.7921142578125,
+        32.514862060546875
+      ],
+      "size": [
+        349.6924133300781,
+        366.1221618652344
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 41
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.35",
+        "Node name for S&R": "PreviewImage",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 5,
+      "type": "LoadImage",
+      "pos": [
+        -3079.85693359375,
+        7.3135457038879395
+      ],
+      "size": [
+        513.1315307617188,
+        593.5972290039062
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            111
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.35",
+        "Node name for S&R": "LoadImage",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "flux_dev_example.png",
+        "image"
+      ]
+    },
+    {
+      "id": 27,
+      "type": "LayerMask: SAM2UltraV2",
+      "pos": [
+        -1217.323974609375,
+        187.90499877929688
+      ],
+      "size": [
+        332.5406188964844,
+        290
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "sam2_model",
+          "type": "LS_SAM2_MODEL",
+          "link": 37
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 113
+        },
+        {
+          "name": "bboxes",
+          "type": "BBOXES",
+          "link": 106
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            39
+          ]
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            40
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui_layerstyle_advance",
+        "ver": "0f9184100e626e3202568a7cf890b3b92685a168",
+        "Node name for S&R": "LayerMask: SAM2UltraV2",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "all",
+        "0,",
+        "VITMatte",
+        6,
+        4,
+        0.15,
+        0.99,
+        true,
+        2
+      ],
+      "color": "rgba(27, 80, 119, 0.7)"
+    },
+    {
+      "id": 55,
+      "type": "LLM",
+      "pos": [
+        -2077.22900390625,
+        27.747159957885742
+      ],
+      "size": [
+        400,
+        566
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "CUSTOM",
+          "link": 62
+        },
+        {
+          "name": "system_prompt_input",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "user_prompt_input",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "tools",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "file_content",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "images",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": 112
+        },
+        {
+          "name": "extra_parameters",
+          "shape": 7,
+          "type": "DICT",
+          "link": null
+        },
+        {
+          "name": "user_history",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "img_URL",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "user_prompt",
+          "type": "STRING",
+          "widget": {
+            "name": "user_prompt"
+          },
+          "link": 110
+        }
+      ],
+      "outputs": [
+        {
+          "name": "assistant_response",
+          "type": "STRING",
+          "links": [
+            115
+          ]
+        },
+        {
+          "name": "history",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "tool",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "reasoning_content",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui_llm_party",
+        "ver": "abd4028b05647f1be5ccc97b2b017f202de2845d",
+        "Node name for S&R": "LLM",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "你是一个强大的人工智能助手。",
+        "",
+        0.7,
+        "disable",
+        "disable",
+        "disable",
+        "disable",
+        512,
+        "",
+        1,
+        "",
+        true,
+        true
+      ]
+    },
+    {
+      "id": 85,
+      "type": "StringReplace",
+      "pos": [
+        -2511.927001953125,
+        17.364370346069336
+      ],
+      "size": [
+        388.4398498535156,
+        348.1802978515625
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "replace",
+          "type": "STRING",
+          "widget": {
+            "name": "replace"
+          },
+          "link": 114
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            110
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.40",
+        "widget_ue_connectable": {},
+        "Node name for S&R": "StringReplace"
+      },
+      "widgets_values": [
+        "Locate the {objects} and output bbox in JSON.The format should looks like:\n\n```json\n[\n\t{\"bbox_2d\": [123, 456, 789, 012], \"label\": \"target_object\"}\n]\n```",
+        "{objects}",
+        ""
+      ]
+    },
+    {
+      "id": 87,
+      "type": "String Literal",
+      "pos": [
+        -3021.356201171875,
+        655.7568359375
+      ],
+      "size": [
+        446.81390380859375,
+        94.68769836425781
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            114
+          ]
+        }
+      ],
+      "title": "遮罩提示词",
+      "properties": {
+        "cnr_id": "comfy-image-saver",
+        "ver": "65e6903eff274a50f8b5cd768f0f96baf37baea1",
+        "widget_ue_connectable": {},
+        "Node name for S&R": "String Literal"
+      },
+      "widgets_values": [
+        "猫耳"
+      ]
+    },
+    {
+      "id": 86,
+      "type": "ResizeImageNode",
+      "pos": [
+        -2461.130859375,
+        481.3630065917969
+      ],
+      "size": [
+        270,
+        106
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 111
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            112,
+            113
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-logicutils",
+        "ver": "1.7.2",
+        "widget_ue_connectable": {},
+        "Node name for S&R": "ResizeImageNode"
+      },
+      "widgets_values": [
+        1024,
+        1024,
+        "NEAREST"
+      ]
+    },
+    {
+      "id": 78,
+      "type": "BBoxesStringToSAM2",
+      "pos": [
+        -1641.87109375,
+        261.1603698730469
+      ],
+      "size": [
+        348.8023376464844,
+        26
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "bboxes_strings",
+          "type": "text",
+          "link": 116
+        }
+      ],
+      "outputs": [
+        {
+          "name": "sam2_bboxes",
+          "type": "BBOXES",
+          "links": [
+            106,
+            117
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "TTPlanetPig/Comfyui_Object_Detect_QWen_VL",
+        "ver": "903d7b898933ab78fceee6d280b85ea54871635f",
+        "Node name for S&R": "BBoxesStringToSAM2",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 88,
+      "type": "easy showAnything",
+      "pos": [
+        -1641.6932373046875,
+        25.419885635375977
+      ],
+      "size": [
+        348.0829772949219,
+        155.263671875
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 115
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "*",
+          "links": [
+            116
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "71c7865d2d3c934ccb99f24171e08ae5a81148ac",
+        "widget_ue_connectable": {},
+        "Node name for S&R": "easy showAnything"
+      },
+      "widgets_values": [
+        "```json\n[\n\t{\"bbox_2d\": [344, 24, 643, 276], \"label\": \"猫耳\"}\n]\n```"
+      ]
+    },
+    {
+      "id": 89,
+      "type": "easy showAnything",
+      "pos": [
+        -1637.4893798828125,
+        353.30816650390625
+      ],
+      "size": [
+        334.42095947265625,
+        118.4813232421875
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 117
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "*",
+          "links": []
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "71c7865d2d3c934ccb99f24171e08ae5a81148ac",
+        "widget_ue_connectable": {},
+        "Node name for S&R": "easy showAnything"
+      },
+      "widgets_values": [
+        "344,24,643,276"
+      ]
+    },
+    {
+      "id": 56,
+      "type": "LLM_api_loader",
+      "pos": [
+        -2072.161376953125,
+        -185.2063446044922
+      ],
+      "size": [
+        270,
+        130
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "model",
+          "type": "CUSTOM",
+          "links": [
+            62
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui_llm_party",
+        "ver": "abd4028b05647f1be5ccc97b2b017f202de2845d",
+        "Node name for S&R": "LLM_api_loader",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "Qwen/Qwen2.5-VL-72B-Instruct",
+        "",
+        "",
+        false
+      ]
+    }
+  ],
+  "links": [
+    [
+      37,
+      28,
+      0,
+      27,
+      0,
+      "LS_SAM2_MODEL"
+    ],
+    [
+      39,
+      27,
+      0,
+      29,
+      0,
+      "IMAGE"
+    ],
+    [
+      40,
+      27,
+      1,
+      30,
+      0,
+      "MASK"
+    ],
+    [
+      41,
+      30,
+      0,
+      31,
+      0,
+      "IMAGE"
+    ],
+    [
+      62,
+      56,
+      0,
+      55,
+      0,
+      "CUSTOM"
+    ],
+    [
+      106,
+      78,
+      0,
+      27,
+      2,
+      "BBOXES"
+    ],
+    [
+      110,
+      85,
+      0,
+      55,
+      9,
+      "STRING"
+    ],
+    [
+      111,
+      5,
+      0,
+      86,
+      0,
+      "IMAGE"
+    ],
+    [
+      112,
+      86,
+      0,
+      55,
+      5,
+      "IMAGE"
+    ],
+    [
+      113,
+      86,
+      0,
+      27,
+      1,
+      "IMAGE"
+    ],
+    [
+      114,
+      87,
+      0,
+      85,
+      0,
+      "STRING"
+    ],
+    [
+      115,
+      55,
+      0,
+      88,
+      0,
+      "*"
+    ],
+    [
+      116,
+      88,
+      0,
+      78,
+      0,
+      "text"
+    ],
+    [
+      117,
+      78,
+      0,
+      89,
+      0,
+      "*"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ue_links": [],
+    "links_added_by_ue": [],
+    "frontendVersion": "1.21.7",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true,
+    "ds": {
+      "scale": 0.7863996114262676,
+      "offset": [
+        3142.0205733418065,
+        599.5066924194527
+      ]
+    }
+  },
+  "version": 0.4
+}
